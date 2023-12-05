@@ -3,4 +3,9 @@
     <string name="add_message">Add Message</string>
     <string name="message">Message</string>
     <string name="id">Id</string>
+    <string name="save_message">Save Message</string>
+    <string name="edit_message">Edit Message</string>
+    <string name="create">Create</string>
+    <string name="enter">Enter</string>
+    <string name="enter_code">Enter Code</string>
 </resources>
