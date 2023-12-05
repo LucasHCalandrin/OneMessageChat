@@ -28,23 +28,20 @@ class MessageActivity : AppCompatActivity() {
             val viewMessage: Boolean = intent.getBooleanExtra(VIEW_MESSAGE, false)
             with(amb) {
                 if (viewMessage) {
+                    idEt.isEnabled = false
                     messageEt.isEnabled = false
                     saveBt.visibility = View.GONE
                 }
-
+                idEt.setText(_receivedMessage.id)
+                messageEt.setText(_receivedMessage.message)
             }
 
         }
 
         with(amb) {
-            val messageId = receivedMessage?.id ?: generateId()
-            Log.d("messageId", messageId.toString())
-            idTv.text = messageId.toString()
-
             saveBt.setOnClickListener {
-
                 val message = com.example.onemessagechat.model.Message(
-                    id = messageId,
+                    id = idEt.text.toString(),
                     message = messageEt.text.toString()
                 )
 

@@ -8,4 +8,6 @@
     <string name="create">Create</string>
     <string name="enter">Enter</string>
     <string name="enter_code">Enter Code</string>
+    <string name="enter_with_chat_code">Enter With Chat Code</string>
+    <string name="code">Code</string>
 </resources>

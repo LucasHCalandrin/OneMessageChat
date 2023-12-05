@@ -1,5 +1,6 @@
 package com.example.onemessagechat.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -32,7 +33,7 @@ class MessageAdapter(
             }
 
             val holder = messageTileView.tag as TileMessageHolder
-            holder.idTv.setText(message.id.toString())
+            holder.idTv.setText(message.id)
             holder.messageTv.maxLines = 1
             holder.messageTv.ellipsize = TextUtils.TruncateAt.END
             holder.messageTv.setText(message.message)

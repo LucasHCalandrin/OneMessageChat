@@ -26,7 +26,23 @@ class MessageController(private val mainActivity: MainActivity) {
         }.start()
     }
 
-    fun getMessage(id: Int) = messageDaoImpl.readMessage(id)
+    interface OnMessageFoundListener {
+        fun onMessageFound(msg: com.example.onemessagechat.model.Message)
+        fun onMessageNotFound()
+    }
+
+    fun getMessage(id: String, callback: OnMessageFoundListener) {
+        Thread {
+            val msg = messageDaoImpl.readMessage(id)
+            mainActivity.runOnUiThread {
+                if (msg != null) {
+                    callback.onMessageFound(msg)
+                } else {
+                    callback.onMessageNotFound()
+                }
+            }
+        }.start()
+    }
 
     fun getAllMessages() {
         Thread {

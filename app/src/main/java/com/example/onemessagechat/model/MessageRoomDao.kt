@@ -20,7 +20,7 @@ interface MessageRoomDao {
     fun createMessage(message : Message)
 
     @Query("SELECT *FROM $MESSAGES_TABLE WHERE $ID_COLUMN = :id")
-    fun readMessage(id: Int): Message?
+    fun readMessage(id: String): Message?
 
     @Query("SELECT * FROM $MESSAGES_TABLE ORDER BY $MESSAGE_COLUMN")
     fun readAllMessages(): MutableList<Message>

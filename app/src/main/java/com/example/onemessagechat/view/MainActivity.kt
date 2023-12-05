@@ -6,19 +6,23 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.AlarmClock.EXTRA_MESSAGE
+import android.util.Log
 import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.onemessagechat.R
 import com.example.onemessagechat.adapter.MessageAdapter
-import com.example.onemessagechat.controller.MessageController
+import com.example.onemessagechat.controller.MessageRtDbFbController
 import com.example.onemessagechat.databinding.ActivityMainBinding
 import com.example.onemessagechat.model.Constant.MESSAGE_ARRAY
 import com.example.onemessagechat.model.Constant.VIEW_MESSAGE
+import com.example.onemessagechat.model.Message
+import java.lang.NumberFormatException
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,22 +31,23 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private val messageList: MutableList<com.example.onemessagechat.model.Message> = mutableListOf()
+    private val messageList: MutableList<Message> = mutableListOf()
+    private val ableMessage: MutableList<Message> = mutableListOf()
 
     private val messageAdapter: MessageAdapter by lazy {
         MessageAdapter(
             this,
-            messageList
+            ableMessage
         )
     }
 
-    private val messageController: MessageController by lazy {
-        MessageController(this)
+    private val messageController: MessageRtDbFbController by lazy {
+         MessageRtDbFbController(this)
     }
 
     companion object {
         const val GET_MESSAGE = 1
-        const val GET_MESSAGE_INTERVAL = 2000L
+        const val GET_MESSAGE_INTERVAL = 3000L
     }
 
     val updateMessageListHandler = object : Handler(Looper.getMainLooper()) {
@@ -66,28 +71,31 @@ class MainActivity : AppCompatActivity() {
         setContentView(amb.root)
 
         setSupportActionBar(amb.toolbarIn.toolbar)
-        amb.messageLv.adapter=messageAdapter
+        amb.messageLv.adapter = messageAdapter
 
         carl = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
-        ){result ->
-            if (result.resultCode == RESULT_OK){
-                val message = result.data?.getParcelableExtra<com.example.onemessagechat.model.Message>(EXTRA_MESSAGE)
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val message =
+                    result.data?.getParcelableExtra<com.example.onemessagechat.model.Message>(
+                        EXTRA_MESSAGE
+                    )
                 message?.let { _message ->
-                    if(messageList.any { it.id == message.id }){
+                    if (messageList.any { it.id == message.id }) {
                         messageController.editMessage(_message)
-                    }else {
+                    } else {
                         messageController.insertMessage(_message)
                     }
                 }
             }
         }
 
-        amb.messageLv.setOnItemClickListener{ parent, view, position, id->
-            val message = messageList[position]
+        amb.messageLv.setOnItemClickListener { parent, view, position, id ->
+            val message = ableMessage[position]
             val viewMessageIntent = Intent(this, MessageActivity::class.java)
                 .putExtra(EXTRA_MESSAGE, message)
-                .putExtra(VIEW_MESSAGE,true)
+                .putExtra(VIEW_MESSAGE, true)
 
             startActivity(viewMessageIntent)
         }
@@ -99,7 +107,33 @@ class MainActivity : AppCompatActivity() {
                 GET_MESSAGE_INTERVAL
             )
         }
-        messageController.getAllMessages()
+        amb.enterBt.setOnClickListener {
+            val messageId = amb.codeEt.text.toString().trim()
+
+            if (messageId.isNotEmpty()) {
+                try {
+                    messageController.getMessage(messageId, object : MessageRtDbFbController.OnMessageFoundListener {
+                        override fun onMessageFound(msg: Message) {
+                            ableMessage.add(msg)
+                            Log.d("Lista: ", ableMessage.toString())
+                            messageAdapter.notifyDataSetChanged()
+                        }
+
+                        override fun onMessageNotFound() {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Chat Not Found", Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    })
+                } catch (e: NumberFormatException) {
+                    Toast.makeText(this, "Wrong Chat Code", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Code", Toast.LENGTH_SHORT).show()
+            }
+        }
+        ableMessage
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -134,7 +168,7 @@ class MainActivity : AppCompatActivity() {
 
         return when (item.itemId){
             R.id.editMessageMi -> {
-                val messageToEdit = messageList[position]
+                val messageToEdit = ableMessage[position]
                 val editMessageIntent = Intent(this, MessageActivity::class.java)
                 editMessageIntent.putExtra(EXTRA_MESSAGE, messageToEdit)
                 carl.launch(editMessageIntent)
