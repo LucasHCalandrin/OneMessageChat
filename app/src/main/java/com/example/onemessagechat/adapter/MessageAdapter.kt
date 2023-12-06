@@ -16,6 +16,7 @@ class MessageAdapter(
     context: Context, private val messageList: MutableList<Message>):
     ArrayAdapter<Message>(context, R.layout.tile_message, messageList){
 
+    @SuppressLint("SuspiciousIndentation")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val message = messageList[position]
         var messageTileView = convertView
