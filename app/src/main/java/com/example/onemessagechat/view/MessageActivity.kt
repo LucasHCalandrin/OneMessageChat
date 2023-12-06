@@ -3,13 +3,11 @@ package com.example.onemessagechat.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Message
-import android.provider.AlarmClock.EXTRA_MESSAGE
-import android.util.Log
 import android.view.View
 import com.example.onemessagechat.databinding.ActivityMessageBinding
+import com.example.onemessagechat.model.Constant.EXTRA_MESSAGE
 import com.example.onemessagechat.model.Constant.VIEW_MESSAGE
-import java.util.Random
+import com.example.onemessagechat.model.Message
 
 class MessageActivity : AppCompatActivity() {
 
@@ -23,7 +21,7 @@ class MessageActivity : AppCompatActivity() {
         setSupportActionBar(amb.toolbarIn.toolbar)
         supportActionBar?.subtitle = "Details"
 
-        val receivedMessage = intent.getParcelableExtra<com.example.onemessagechat.model.Message>(EXTRA_MESSAGE)
+        val receivedMessage = intent.getParcelableExtra<Message>(EXTRA_MESSAGE)
         receivedMessage?.let {_receivedMessage ->
             val viewMessage: Boolean = intent.getBooleanExtra(VIEW_MESSAGE, false)
             with(amb) {
@@ -40,7 +38,7 @@ class MessageActivity : AppCompatActivity() {
 
         with(amb) {
             saveBt.setOnClickListener {
-                val message = com.example.onemessagechat.model.Message(
+                val message = Message(
                     id = idEt.text.toString(),
                     message = messageEt.text.toString()
                 )
@@ -52,7 +50,4 @@ class MessageActivity : AppCompatActivity() {
             }
         }
     }
-
-    private fun generateId() = Random(System.currentTimeMillis()).nextInt()
-
 }

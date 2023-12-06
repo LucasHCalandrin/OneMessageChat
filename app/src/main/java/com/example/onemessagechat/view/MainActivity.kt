@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.AlarmClock.EXTRA_MESSAGE
 import android.util.Log
 import android.view.ContextMenu
 import android.view.Menu
@@ -19,6 +18,7 @@ import com.example.onemessagechat.R
 import com.example.onemessagechat.adapter.MessageAdapter
 import com.example.onemessagechat.controller.MessageRtDbFbController
 import com.example.onemessagechat.databinding.ActivityMainBinding
+import com.example.onemessagechat.model.Constant.EXTRA_MESSAGE
 import com.example.onemessagechat.model.Constant.MESSAGE_ARRAY
 import com.example.onemessagechat.model.Constant.VIEW_MESSAGE
 import com.example.onemessagechat.model.Message
@@ -78,9 +78,7 @@ class MainActivity : AppCompatActivity() {
         ) { result ->
             if (result.resultCode == RESULT_OK) {
                 val message =
-                    result.data?.getParcelableExtra<com.example.onemessagechat.model.Message>(
-                        EXTRA_MESSAGE
-                    )
+                    result.data?.getParcelableExtra<Message>(EXTRA_MESSAGE)
                 message?.let { _message ->
                     if (messageList.any { it.id == message.id }) {
                         messageController.editMessage(_message)
