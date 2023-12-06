@@ -1,6 +1,6 @@
 package com.example.onemessagechat.controller
 
-import com.example.onemessagechat.model.Constant
+import com.example.onemessagechat.model.Constant.MESSAGE_ARRAY
 import com.example.onemessagechat.model.Message
 import com.example.onemessagechat.model.MessageDao
 import com.example.onemessagechat.model.MessageDaoRtDbFb
@@ -41,7 +41,7 @@ class MessageRtDbFbController(private val mainActivity: MainActivity) {
             mainActivity.updateMessageListHandler.apply {
                 sendMessage(android.os.Message().apply {
                     data.putParcelableArray(
-                        Constant.MESSAGE_ARRAY,
+                        MESSAGE_ARRAY,
                         returnList.toTypedArray()
                     )
                 })
